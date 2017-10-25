@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES6"
+    },
+    "exclude": [
+        "node_modules",
+        "public",
+        "src",
+        "test",
+        "seed.js",
+        "webpack.config.js"
+    ]
+}
