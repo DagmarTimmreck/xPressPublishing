@@ -3,3 +3,4 @@ build/
 
 test/test.sqlite-journal
 test/test.sqlite
+database.sqlite
