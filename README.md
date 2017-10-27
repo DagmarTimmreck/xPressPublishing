@@ -1,5 +1,10 @@
 # X-Press Publishing
 
+
+## Comments
+
+- altered oreder of tests to follow api spec
+
 ## Project Overview
 
 In this capstone project, you will build all of the routing and database logic for an internal tool for a comic book publishing company called X-Press Publishing.
