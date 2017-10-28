@@ -4,6 +4,24 @@ const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 const seriesRouter = express.Router();
 
+const issuesRouter = require('./issues.js');
+
+seriesRouter.param('seriesId', (res, req, next, id) => {
+  db.get('SELECT * FROM Series WHERE id = $id',
+    {
+      $id: id,
+    }, (error, row) => {
+      if (row) {
+        req.series = row;
+        next();
+      } else {
+        res.statusCode(404).send();
+      }
+    });
+});
+
+seriesRouter.use('/:seriesId/issues', issuesRouter);
+
 seriesRouter.get('/', (req, res, next) => {
   db.all('SELECT * FROM Series',
     (error, rows) => {
@@ -30,21 +48,13 @@ seriesRouter.post('/', (req, res, next) => {
           });
       });
   } else {
-    res.status(400).send();
+    res.status(404).send();
   }
 });
 
 seriesRouter.get('/:seriesId', (req, res, next) => {
-  const id = req.params.seriesId;
-  db.get('SELECT * FROM Series WHERE id = $id',
-    {
-      $id: id,
-    }, (error, row) => {
-      if (row) {
-        res.status(200).send({ series: row });
-      }
-      next();
-    });
+  res.status(200).send({ series: req.series });
+  next();
 });
 
 seriesRouter.put('/:seriesId', (req, res, next) => {

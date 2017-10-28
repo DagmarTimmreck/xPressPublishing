@@ -3,7 +3,10 @@
 
 ## Comments
 
-- altered oreder of tests to follow api spec
+- altered order of tests to follow api spec
+- change wording of message for 'DELETE /api/series/:id' for series with related issues to match spec/test
+- added test for 'DELETE /api/series/:id' with non-existing id
+- Error on DELETE before each hook ?!?!?! Perhaps because of missing seedIssueDatabase ?
 
 ## Project Overview
 
