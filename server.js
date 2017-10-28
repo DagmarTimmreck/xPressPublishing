@@ -1,7 +1,7 @@
 const Express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser-json');
-const morgan = require('morgan');
+// const morgan = require('morgan');
 
 const app = new Express();
 module.exports = app;
@@ -14,8 +14,8 @@ app.use(cors());
 // automatically parse json body to req.body
 app.use(bodyParser.json());
 
-// logging with dev infos
-app.use(morgan('dev'));
+// logging with dev infos -- activate if desired
+// app.use(morgan('dev'));
 
 // Mount apiRouter below at the '/api' path.
 const apiRouter = require('./routers/api.js');
