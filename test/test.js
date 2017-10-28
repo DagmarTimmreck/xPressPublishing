@@ -8,14 +8,11 @@ const sqlite3 = require('sqlite3');
 const app = require('../server.js');
 const seed = require('./seed.js');
 
-// scrutinize production db. Make sure to revert all changes made for testing purposes.
 const prodDb = new sqlite3.Database('./database.sqlite');
+let testDb = new sqlite3.Database(process.env.TEST_DATABASE);
 
-// use a test db for testing the api
-const testDb = new sqlite3.Database(process.env.TEST_DATABASE);
-
-describe('Artist Table', () => {
-  it('should exist', (done) => {
+describe('Artist Table', function() {
+  it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Artist'", (error, table) => {
       if (error || !table) {
         done(new Error(error || 'Artist table not found'));
@@ -26,7 +23,7 @@ describe('Artist Table', () => {
     });
   });
 
-  it('should have name, date_of_birth, biography, and is_currently_employed columns with appropriate data types', (done) => {
+  it('should have name, date_of_birth, biography, and is_currently_employed columns with appropriate data types', function(done) {
     prodDb.run("INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ('Artist Name', 'January 1, 1980', 'My Biography', 1)", function(error) {
       if (error) {
         done(new Error(error));
@@ -39,7 +36,7 @@ describe('Artist Table', () => {
     });
   });
 
-  it('should have a required name column', (done) => {
+  it('should have a required name column', function(done) {
     prodDb.run("INSERT INTO Artist (date_of_birth, biography, is_currently_employed) VALUES ('January 1, 1980', 'My Biography', 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -53,7 +50,7 @@ describe('Artist Table', () => {
     });
   });
 
-  it('should have a required date_of_birth column', (done) => {
+  it('should have a required date_of_birth column', function(done) {
     prodDb.run("INSERT INTO Artist (name, biography, is_currently_employed) VALUES ('Artist Name', 'My Biography', 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -67,7 +64,7 @@ describe('Artist Table', () => {
     });
   });
 
-  it('should have a required biography column', (done) => {
+  it('should have a required biography column', function(done) {
     prodDb.run("INSERT INTO Artist (name, date_of_birth, is_currently_employed) VALUES ('Artist Name', 'January 1, 1980', 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -81,7 +78,7 @@ describe('Artist Table', () => {
     });
   });
 
-  it('is_currently_employed should default to 1', (done) => {
+  it('is_currently_employed should default to 1', function(done) {
     prodDb.run("INSERT INTO Artist (name, date_of_birth, biography) VALUES ('Artist Name', 'January 1, 1980', 'My Biography')", function(error) {
       if (error) {
         done(new Error(error));
@@ -98,8 +95,8 @@ describe('Artist Table', () => {
   });
 });
 
-describe('Series Table', () => {
-  it('should exist', (done) => {
+describe('Series Table', function() {
+  it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Series'", (error, table) => {
       if (error || !table) {
         done(new Error(error || 'Series table not found'));
@@ -110,7 +107,7 @@ describe('Series Table', () => {
     });
   });
 
-  it('should have id, name, and description columns with appropriate data types', (done) => {
+  it('should have id, name, and description columns with appropriate data types', function(done) {
     prodDb.run("INSERT INTO Series (name, description) VALUES ('Series Name', 'Series Description')", function(error) {
       if (error) {
         done(new Error(error));
@@ -123,7 +120,7 @@ describe('Series Table', () => {
     });
   });
 
-  it('should have a required name column', (done) => {
+  it('should have a required name column', function(done) {
     prodDb.run("INSERT INTO Series (description) VALUES ('Series Description')", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -137,7 +134,7 @@ describe('Series Table', () => {
     });
   });
 
-  it('should have a required description column', (done) => {
+  it('should have a required description column', function(done) {
     prodDb.run("INSERT INTO Series (name) VALUES ('Series Name')", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -152,8 +149,8 @@ describe('Series Table', () => {
   });
 });
 
-describe('Issue Table', () => {
-  it('should exist', (done) => {
+describe('Issue Table', function() {
+  it('should exist', function(done) {
     prodDb.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Issue'", (error, table) => {
       if (error || !table) {
         done(new Error(error || 'Issue table not found'));
@@ -164,7 +161,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have id, name, issue_number, publication_date, artist_id, and series_id columns with appropriate data types', (done) => {
+  it('should have id, name, issue_number, publication_date, artist_id, and series_id columns with appropriate data types', function(done) {
     prodDb.run("INSERT INTO Issue (name, issue_number, publication_date, artist_id, series_id) VALUES ('Issue Name', 1, 'January 1, 1980', 1, 1)", function(error) {
       if (error) {
         done(new Error(error));
@@ -177,7 +174,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required name column', (done) => {
+  it('should have a required name column', function(done) {
     prodDb.run("INSERT INTO Issue (issue_number, publication_date, artist_id, series_id) VALUES (1, 'January 1, 1980', 1, 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -191,7 +188,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required name column', (done) => {
+  it('should have a required name column', function(done) {
     prodDb.run("INSERT INTO Issue (issue_number, publication_date, artist_id, series_id) VALUES (1, 'January 1, 1980', 1, 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -205,7 +202,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required issue_number column', (done) => {
+  it('should have a required issue_number column', function(done) {
     prodDb.run("INSERT INTO Issue (name, publication_date, artist_id, series_id) VALUES ('Issue Name', 'January 1, 1980', 1, 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -219,7 +216,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required publication_date column', (done) => {
+  it('should have a required publication_date column', function(done) {
     prodDb.run("INSERT INTO Issue (name, issue_number, artist_id, series_id) VALUES ('Issue Name', 1, 1, 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -233,7 +230,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required artist_id column', (done) => {
+  it('should have a required artist_id column', function(done) {
     prodDb.run("INSERT INTO Issue (name, issue_number, publication_date, series_id) VALUES ('Issue Name', 1, 'January 1, 1980', 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -247,7 +244,7 @@ describe('Issue Table', () => {
     });
   });
 
-  it('should have a required series_id column', (done) => {
+  it('should have a required series_id column', function(done) {
     prodDb.run("INSERT INTO Issue (name, issue_number, publication_date, artist_id) VALUES ('Issue Name', 1, 'January 1, 1980', 1)", function(error) {
       if (error && error.toString().includes('NOT NULL constraint failed')) {
         done();
@@ -262,12 +259,12 @@ describe('Issue Table', () => {
   });
 });
 
-xdescribe('GET /api/artists', () => {
-  before((done) => {
+describe('GET /api/artists', function() {
+  before(function(done) {
     seed.seedArtistDatabase(done);
   });
 
-  it('should return all currently-employed artists', () => {
+  it('should return all currently-employed artists', function() {
     return request(app)
         .get('/api/artists')
         .then(function(response) {
@@ -279,19 +276,19 @@ xdescribe('GET /api/artists', () => {
         });
   });
 
-  it('should return a status code of 200', () => {
+  it('should return a status code of 200', function() {
     return request(app)
         .get('/api/artists')
         .expect(200);
   });
 });
 
-xdescribe('GET /api/artists/:id', () => {
-  before((done) => {
+describe('GET /api/artists/:id', function() {
+  before(function(done) {
     seed.seedArtistDatabase(done);
   });
 
-  it('should return the artist with the given ID', () => {
+  it('should return the artist with the given ID', function() {
     return request(app)
         .get('/api/artists/2')
         .then(function(response) {
@@ -304,23 +301,23 @@ xdescribe('GET /api/artists/:id', () => {
         });
   });
 
-  it('should return a 200 status code for valid IDs', () => {
+  it('should return a 200 status code for valid IDs', function() {
     return request(app)
         .get('/api/artists/2')
         .expect(200);
   });
 
-  it('should return a 404 status code for invalid IDs', () => {
+  it('should return a 404 status code for invalid IDs', function() {
     return request(app)
         .get('/api/artists/999')
         .expect(404);
   });
 });
 
-xdescribe('POST /api/artists', () => {
+describe('POST /api/artists', function() {
   let newArtist;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     newArtist = {
       name: 'New Artist',
       dateOfBirth: 'February 1, 1980',
@@ -330,7 +327,7 @@ xdescribe('POST /api/artists', () => {
     seed.seedArtistDatabase(done);
   });
 
-  it('should create a valid artist', (done) => {
+  it('should create a valid artist', function(done) {
       request(app)
         .post('/api/artists/')
         .send({artist: newArtist})
@@ -349,14 +346,14 @@ xdescribe('POST /api/artists', () => {
         }).catch(done);
   });
 
-  it('should return a 201 status code after artist creation', () => {
+  it('should return a 201 status code after artist creation', function() {
     return request(app)
         .post('/api/artists/')
         .send({artist: newArtist})
         .expect(201);
   });
 
-  it('should return the newly-created artist after artist creation', () => {
+  it('should return the newly-created artist after artist creation', function() {
     return request(app)
         .post('/api/artists/')
         .send({artist: newArtist})
@@ -370,7 +367,7 @@ xdescribe('POST /api/artists', () => {
         });
   });
 
-  it('should set new artists as currently-employed by default', () => {
+  it('should set new artists as currently-employed by default', function() {
     return request(app)
         .post('/api/artists/')
         .send({artist: newArtist})
@@ -380,7 +377,7 @@ xdescribe('POST /api/artists', () => {
         });
   });
 
-  it('should return a 400 status code for invalid artists', () => {
+  it('should return a 400 status code for invalid artists', function() {
     newArtist = {
       dateOfBirth: 'February 1, 1980',
       biography: 'My Biography'
@@ -393,10 +390,10 @@ xdescribe('POST /api/artists', () => {
   });
 });
 
-xdescribe('PUT /api/artists/:id', () => {
+describe('PUT /api/artists/:id', function() {
   let updatedArtist;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     updatedArtist = {
       name: 'Updated Artist',
       dateOfBirth: 'February 1, 1981',
@@ -407,7 +404,7 @@ xdescribe('PUT /api/artists/:id', () => {
     seed.seedArtistDatabase(done);
   });
 
-  it('should update the artist with the given ID', (done) => {
+  it('should update the artist with the given ID', function(done) {
     request(app)
         .put('/api/artists/1')
         .send({artist: updatedArtist})
@@ -427,14 +424,14 @@ xdescribe('PUT /api/artists/:id', () => {
         }).catch(done);
   });
 
-  it('should return a 200 status code after artist update', () => {
+  it('should return a 200 status code after artist update', function() {
     return request(app)
         .put('/api/artists/1')
         .send({artist: updatedArtist})
         .expect(200);
   });
 
-  it('should return the updated artist after artist update', () => {
+  it('should return the updated artist after artist update', function() {
     return request(app)
         .put('/api/artists/1')
         .send({artist: updatedArtist})
@@ -448,7 +445,7 @@ xdescribe('PUT /api/artists/:id', () => {
         });
   });
 
-  it('should return a 400 status code for invalid artist updates', () => {
+  it('should return a 400 status code for invalid artist updates', function() {
     updatedArtist = {
       dateOfBirth: 'February 1, 1981',
       biography: 'My New Biography',
@@ -462,12 +459,12 @@ xdescribe('PUT /api/artists/:id', () => {
   });
 });
 
-xdescribe('DELETE /api/artists/:id', () => {
-  beforeEach((done) => {
+describe('DELETE /api/artists/:id', function() {
+  beforeEach(function(done) {
     seed.seedArtistDatabase(done);
   });
 
-  it('should set the artist with the given ID as not currently-employed', (done) => {
+  it('should set the artist with the given ID as not currently-employed', function(done) {
     request(app)
         .del('/api/artists/1')
         .then(function() {
@@ -482,13 +479,13 @@ xdescribe('DELETE /api/artists/:id', () => {
         }).catch(done);
   });
 
-  it('should return a 200 status code after artist delete', () => {
+  it('should return a 200 status code after artist delete', function() {
     return request(app)
         .del('/api/artists/1')
         .expect(200);
   });
 
-  it('should return the deleted artist after artist delete', () => {
+  it('should return the deleted artist after artist delete', function() {
     return request(app)
         .del('/api/artists/1')
         .then(function(response) {
@@ -499,12 +496,12 @@ xdescribe('DELETE /api/artists/:id', () => {
   });
 });
 
-xdescribe('GET /api/series', () => {
-  before((done) => {
+describe('GET /api/series', function() {
+  before(function(done) {
     seed.seedSeriesDatabase(done);
   });
 
-  it('should return all series', () => {
+  it('should return all series', function() {
     return request(app)
         .get('/api/series')
         .then(function(response) {
@@ -516,19 +513,19 @@ xdescribe('GET /api/series', () => {
         });
   });
 
-  it('should return a status code of 200', () => {
+  it('should return a status code of 200', function() {
     return request(app)
         .get('/api/series')
         .expect(200);
   });
 });
 
-xdescribe('GET /api/series/:id', () => {
-  before((done) => {
+describe('GET /api/series/:id', function() {
+  before(function(done) {
     seed.seedSeriesDatabase(done);
   });
 
-  it('should return the series with the given ID', () => {
+  it('should return the series with the given ID', function() {
     return request(app)
         .get('/api/series/2')
         .then(function(response) {
@@ -539,23 +536,23 @@ xdescribe('GET /api/series/:id', () => {
         });
   });
 
-  it('should return a 200 status code for valid IDs', () => {
+  it('should return a 200 status code for valid IDs', function() {
     return request(app)
         .get('/api/series/2')
         .expect(200);
   });
 
-  it('should return a 404 status code for invalid IDs', () => {
+  it('should return a 404 status code for invalid IDs', function() {
     return request(app)
         .get('/api/series/999')
         .expect(404);
   });
 });
 
-xdescribe('POST /api/series', () => {
+describe('POST /api/series', function() {
   let newSeries;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     newSeries = {
       name: 'New Series',
       description: 'New Description'
@@ -564,7 +561,7 @@ xdescribe('POST /api/series', () => {
     seed.seedSeriesDatabase(done);
   });
 
-  it('should create a valid series', () => {
+  it('should create a valid series', function() {
     return request(app)
         .post('/api/series/')
         .send({series: newSeries})
@@ -582,14 +579,14 @@ xdescribe('POST /api/series', () => {
         });
   });
 
-  it('should return a 201 status code after series creation', () => {
+  it('should return a 201 status code after series creation', function() {
     return request(app)
         .post('/api/series/')
         .send({series: newSeries})
         .expect(201);
   });
 
-  it('should return the newly-created series after series creation', () => {
+  it('should return the newly-created series after series creation', function() {
     return request(app)
         .post('/api/series/')
         .send({series: newSeries})
@@ -602,7 +599,7 @@ xdescribe('POST /api/series', () => {
         });
   });
 
-  it('should return a 400 status code for invalid series', () => {
+  it('should return a 400 status code for invalid series', function() {
     newSeries = {
       name: 'New Series'
     };
@@ -614,10 +611,10 @@ xdescribe('POST /api/series', () => {
   });
 });
 
-xdescribe('PUT /api/series/:id', () => {
+describe('PUT /api/series/:id', function() {
   let updatedSeries;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     updatedSeries = {
       name: 'Updated Series',
       description: 'Updated Description'
@@ -626,7 +623,7 @@ xdescribe('PUT /api/series/:id', () => {
     seed.seedSeriesDatabase(done);
   });
 
-  it('should update the series with the given ID', (done) => {
+  it('should update the series with the given ID', function(done) {
     request(app)
         .put('/api/series/1')
         .send({series: updatedSeries})
@@ -644,14 +641,14 @@ xdescribe('PUT /api/series/:id', () => {
         }).catch(done);
   });
 
-  it('should return a 200 status code after series update', () => {
+  it('should return a 200 status code after series update', function() {
     return request(app)
         .put('/api/series/1')
         .send({series: updatedSeries})
         .expect(200);
   });
 
-  it('should return the updated series after series update', () => {
+  it('should return the updated series after series update', function() {
     return request(app)
         .put('/api/series/1')
         .send({series: updatedSeries})
@@ -664,7 +661,7 @@ xdescribe('PUT /api/series/:id', () => {
         });
   });
 
-  it('should return a 400 status code for invalid series updates', () => {
+  it('should return a 400 status code for invalid series updates', function() {
     updatedSeries = {
       description: 'Updated Description'
     };
@@ -676,12 +673,12 @@ xdescribe('PUT /api/series/:id', () => {
   });
 });
 
-xdescribe('DELETE /api/series/:id', () => {
-  beforeEach((done) => {
+describe('DELETE /api/series/:id', function() {
+  beforeEach(function(done) {
     seed.seedSeriesDatabase(done);
   });
 
-  it('should remove the series with the specified ID from the database if that series has no related issues', () => {
+  it('should remove the series with the specified ID from the database if that series has no related issues', function() {
     return request(app)
         .del('/api/series/1')
         .then(function() {
@@ -694,13 +691,13 @@ xdescribe('DELETE /api/series/:id', () => {
         });
   });
 
-  it('should return a 204 status code after series delete', () => {
+  it('should return a 204 status code after series delete', function() {
     return request(app)
         .del('/api/series/1')
         .expect(204);
   });
 
-  it('should not delete series with existing related issues', () => {
+  it('should not delete series with existing related issues', function() {
     return request(app)
         .del('/api/series/2')
         .then(function() {
@@ -713,19 +710,19 @@ xdescribe('DELETE /api/series/:id', () => {
         });
   });
 
-  it('should not return a 400 status code if deleted series has existing related issues', () => {
+  it('should not return a 400 status code if deleted series has existing related issues', function() {
     return request(app)
         .del('/api/series/2')
         .expect(400);
   });
 });
 
-xdescribe('GET /api/series/:seriesId/issues', () => {
-  before((done) => {
+describe('GET /api/series/:seriesId/issues', function() {
+  before(function(done) {
     seed.seedIssueDatabase(done);
   });
 
-  it('should return all issues of an existing series', () => {
+  it('should return all issues of an existing series', function() {
     return request(app)
         .get('/api/series/2/issues')
         .then(function(response) {
@@ -736,7 +733,7 @@ xdescribe('GET /api/series/:seriesId/issues', () => {
         });
   });
 
-  it('should return an empty array for existing series with no issues', () => {
+  it('should return an empty array for existing series with no issues', function() {
     return request(app)
         .get('/api/series/1/issues')
         .then(function(response) {
@@ -745,23 +742,23 @@ xdescribe('GET /api/series/:seriesId/issues', () => {
         });
   });
 
-  it('should return a status code of 200 for valid series', () => {
+  it('should return a status code of 200 for valid series', function() {
     return request(app)
         .get('/api/series/2/issues')
         .expect(200);
   });
 
-  it('should return a status code of 404 for invalid series', () => {
+  it('should return a status code of 404 for invalid series', function() {
     return request(app)
         .get('/api/series/999/issues')
         .expect(404);
       });
 });
 
-xdescribe('POST /api/series/:seriesId/issues', () => {
+describe('POST /api/series/:seriesId/issues', function() {
   let newIssue;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     newIssue = {
       name: 'New Issue',
       issueNumber: 3,
@@ -772,7 +769,7 @@ xdescribe('POST /api/series/:seriesId/issues', () => {
     seed.seedIssueDatabase(done);
   });
 
-  it('should create a valid issue', (done) => {
+  it('should create a valid issue', function(done) {
     request(app)
         .post('/api/series/2/issues')
         .send({issue: newIssue})
@@ -794,14 +791,14 @@ xdescribe('POST /api/series/:seriesId/issues', () => {
         }).catch(done);
   });
 
-  it('should return a 201 status code after issue creation', () => {
+  it('should return a 201 status code after issue creation', function() {
     return request(app)
         .post('/api/series/2/issues')
         .send({issue: newIssue})
         .expect(201);
   });
 
-  it('should return the newly-created issue after issue creation', () => {
+  it('should return the newly-created issue after issue creation', function() {
     return request(app)
         .post('/api/series/2/issues')
         .send({issue: newIssue})
@@ -817,7 +814,7 @@ xdescribe('POST /api/series/:seriesId/issues', () => {
         });
   });
 
-  it('should return a 400 status code for invalid issues', () => {
+  it('should return a 400 status code for invalid issues', function() {
     newIssue = {
       issueNumber: 3,
       publicationDate: 'January 3, 1990',
@@ -830,7 +827,7 @@ xdescribe('POST /api/series/:seriesId/issues', () => {
         .expect(400);
   });
 
-  it('should return a 400 status code if an artist with the issue\'s artist ID doesn\'t exist', () => {
+  it('should return a 400 status code if an artist with the issue\'s artist ID doesn\'t exist', function() {
     newIssue = {
       issueNumber: 3,
       publicationDate: 'January 3, 1990',
@@ -844,10 +841,10 @@ xdescribe('POST /api/series/:seriesId/issues', () => {
   });
 });
 
-xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
+describe('PUT /api/series/:seriesId/issues/:issueId', function() {
   let updatedIssue;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     updatedIssue = {
       name: 'Updated Issue',
       issueNumber: 3,
@@ -858,7 +855,7 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
     seed.seedIssueDatabase(done);
   });
 
-  it('should update the issue with the given ID', (done) => {
+  it('should update the issue with the given ID', function(done) {
     request(app)
         .put('/api/series/2/issues/1')
         .send({issue: updatedIssue})
@@ -879,14 +876,14 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
         }).catch(done);
   });
 
-  it('should return a 200 status code after issue update', () => {
+  it('should return a 200 status code after issue update', function() {
     return request(app)
         .put('/api/series/2/issues/1')
         .send({issue: updatedIssue})
         .expect(200);
   });
 
-  it('should return the updated issue after issue update', () => {
+  it('should return the updated issue after issue update', function() {
     return request(app)
         .put('/api/series/2/issues/1')
         .send({issue: updatedIssue})
@@ -902,7 +899,7 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
         });
   });
 
-  it('should return a 404 status code for invalid issue IDs', () => {
+  it('should return a 404 status code for invalid issue IDs', function() {
     updatedIssue = {
       issueNumber: 3,
       publicationDate: 'January 3, 1990',
@@ -915,7 +912,7 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
         .expect(404);
   });
 
-  it('should return a 400 status code for invalid issue updates', () => {
+  it('should return a 400 status code for invalid issue updates', function() {
     updatedIssue = {
       issueNumber: 3,
       publicationDate: 'January 3, 1990',
@@ -928,7 +925,7 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
         .expect(400);
   });
 
-  it('should return a 400 status code if an artist with the updated artist ID doesn\'t exist', () => {
+  it('should return a 400 status code if an artist with the updated artist ID doesn\'t exist', function() {
     updatedIssue = {
       issueNumber: 3,
       publicationDate: 'January 3, 1990',
@@ -942,12 +939,12 @@ xdescribe('PUT /api/series/:seriesId/issues/:issueId', () => {
   });
 });
 
-xdescribe('DELETE /api/series/:seriesId/issues/:issueId', () => {
-  beforeEach((done) => {
+describe('DELETE /api/series/:seriesId/issues/:issueId', function() {
+  beforeEach(function(done) {
     seed.seedIssueDatabase(done);
   });
 
-  it('should remove the issue with the specified ID from the database', (done) => {
+  it('should remove the issue with the specified ID from the database', function(done) {
     request(app)
         .del('/api/series/2/issues/1')
         .then(function() {
@@ -961,13 +958,13 @@ xdescribe('DELETE /api/series/:seriesId/issues/:issueId', () => {
         }).catch(done);
   });
 
-  it('should return a 204 status code after issue delete', () => {
+  it('should return a 204 status code after issue delete', function() {
     return request(app)
         .del('/api/series/2/issues/1')
         .expect(204);
   });
 
-  it('should return a 404 status code for invalid issue IDs', () => {
+  it('should return a 404 status code for invalid issue IDs', function() {
     return request(app)
         .del('/api/series/2/issues/999')
         .expect(404);
