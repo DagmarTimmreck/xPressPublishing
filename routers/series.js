@@ -6,7 +6,7 @@ const seriesRouter = express.Router();
 
 const issuesRouter = require('./issues.js');
 
-seriesRouter.param('seriesId', (res, req, next, id) => {
+seriesRouter.param('seriesId', (req, res, next, id) => {
   db.get('SELECT * FROM Series WHERE id = $id',
     {
       $id: id,
@@ -15,7 +15,7 @@ seriesRouter.param('seriesId', (res, req, next, id) => {
         req.series = row;
         next();
       } else {
-        res.statusCode(404).send();
+        res.status(404).send();
       }
     });
 });
