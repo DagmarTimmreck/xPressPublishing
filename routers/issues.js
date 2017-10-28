@@ -4,6 +4,20 @@ const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 const issuesRouter = express.Router({ mergeParams: true });
 
+issuesRouter.param('issueId', (req, res, next, issueId) => {
+  db.get('SELECT * FROM Issue WHERE id = $id',
+    {
+      $id: issueId,
+    },
+    (error, row) => {
+      if (!row) {
+        res.status(404).send();
+      } else {
+        next();
+      }
+    });
+});
+
 issuesRouter.get('/', (req, res, next) => {
   db.all('SELECT * FROM Issue WHERE series_id = $seriesId',
     {
@@ -17,76 +31,71 @@ issuesRouter.get('/', (req, res, next) => {
     });
 });
 
-// issuesRouter.post('/', (req, res, next) => {
-//   const newIssue = req.body && req.issue;
-//   if (newIssue && newIssue.name && newIssue.description) {
-//     db.run('INSERT INTO Issue (name, description) VALUES ($name, $description)',
-//       {
-//         $name: newIssue.name,
-//         $description: newIssue.description,
-//       },
-//       function () {
-//         db.get('SELECT * FROM Issue WHERE id = $id',
-//           {
-//             $id: this.lastID,
-//           }, (error, row) => {
-//             res.status(201).send({ issue: row });
-//             next();
-//           });
-//       });
-//   } else {
-//     res.status(400).send();
-//   }
-// });
+issuesRouter.post('/', (req, res, next) => {
+  const newIssue = req.body && req.body.issue;
+  if (newIssue && newIssue.name && newIssue.issueNumber
+    && newIssue.publicationDate && newIssue.artistId) {
+    db.run('INSERT INTO Issue (name, issue_number, publication_date, artist_id, series_id) VALUES ($name, $issueNumber, $publicationDate, $artistId, $seriesId)',
+      {
+        $name: newIssue.name,
+        $issueNumber: newIssue.issueNumber,
+        $publicationDate: newIssue.publicationDate,
+        $artistId: newIssue.artistId,
+        $seriesId: newIssue.seriesId || req.params.seriesId,
+      },
+      function () {
+        db.get('SELECT * FROM Issue WHERE id = $id',
+          {
+            $id: this.lastID,
+          }, (error, row) => {
+            res.status(201).send({ issue: row });
+            next();
+          });
+      });
+  } else {
+    res.status(400).send();
+  }
+});
 
-// issuesRouter.get('/:issuesId', (req, res, next) => {
-//   const id = req.params.issuesId;
-//   db.get('SELECT * FROM Issue WHERE id = $id',
-//     {
-//       $id: id,
-//     }, (error, row) => {
-//       if (row) {
-//         res.status(200).send({ issue: row });
-//       }
-//       next();
-//     });
-// });
+issuesRouter.put('/:issueId', (req, res, next) => {
+  const id = req.params.issueId;
+  const newIssue = req.body && req.body.issue;
+  if (newIssue && newIssue.name && newIssue.issueNumber
+      && newIssue.publicationDate && newIssue.artistId) {
+    db.run('UPDATE Issue SET name = $name, issue_number = $issueNumber, publication_date = $publicationDate, artist_id = $artistId, series_id = $seriesId WHERE id = $id',
+      {
+        $id: id,
+        $name: newIssue.name,
+        $issueNumber: newIssue.issueNumber,
+        $publicationDate: newIssue.publicationDate,
+        $artistId: newIssue.artistId,
+        $seriesId: newIssue.seriesId || req.params.seriesId,
+      },
+      () => {
+        db.get('SELECT * FROM Issue WHERE id = $id',
+          {
+            $id: id,
+          }, (error, row) => {
+            res.status(200).send({ issue: row });
+            next();
+          });
+      });
+  } else {
+    res.status(400).send();
+  }
+});
 
-// issuesRouter.put('/:issuesId', (req, res, next) => {
-//   const id = req.params.issuesId;
-//   const newIssue = req.body && req.issue;
-//   if (newIssue && newIssue.name && newIssue.description) {
-//     db.run('UPDATE Issue SET name = $name, description = $description WHERE id = $id',
-//       {
-//         $id: id,
-//         $name: newIssue.name,
-//         $description: newIssue.description,
-//       },
-//       function () {
-//         db.get('SELECT * FROM Issue WHERE id = $id',
-//           {
-//             $id: id,
-//           }, (error, row) => {
-//             res.status(200).send({ issue: row });
-//             next();
-//           });
-//       });
-//   } else {
-//     res.status(400).send();
-//   }
-// });
-
-// issuesRouter.delete('/:issuesId', (req, res, next) => {
-//   const id = req.params.issuesId;
-//   db.run('DELETE FROM Issue WHERE id = $id',
-//     {
-//       $id: id,
-//     },
-//     (error) => {
-//       res.status(204).send();
-//       next();
-//     });
-// });
+issuesRouter.delete('/:issueId', (req, res, next) => {
+  const id = req.params.issueId;
+  db.run('DELETE FROM Issue WHERE id = $id',
+    {
+      $id: id,
+    },
+    () => {
+      res.status(204).send();
+      next();
+    });
+});
 
 
 module.exports = issuesRouter;

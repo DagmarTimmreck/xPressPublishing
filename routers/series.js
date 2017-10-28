@@ -48,7 +48,7 @@ seriesRouter.post('/', (req, res, next) => {
           });
       });
   } else {
-    res.status(404).send();
+    res.status(400).send();
   }
 });
 
@@ -81,17 +81,17 @@ seriesRouter.put('/:seriesId', (req, res, next) => {
   }
 });
 
-// seriesRouter.delete('/:seriesId', (req, res, next) => {
-//   const id = req.params.seriesId;
-//   db.run('DELETE FROM Series WHERE id = $id',
-//     {
-//       $id: id,
-//     },
-//     (error) => {
-//       res.status(204).send();
-//       next();
-//     });
-// });
+seriesRouter.delete('/:seriesId', (req, res, next) => {
+  const id = req.params.seriesId;
+  db.run('DELETE FROM Series WHERE id = $id',
+    {
+      $id: id,
+    },
+    (error) => {
+      res.status(204).send();
+      next();
+    });
+});
 
 
 module.exports = seriesRouter;
